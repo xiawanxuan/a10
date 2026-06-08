@@ -23,10 +23,8 @@ class ClassifierInference:
         self.model.load_state_dict(checkpoint["model_state_dict"])
     
     def predict(self, image, top_k=5):
-        if isinstance(image, str):
-            image = Image.open(image).convert("RGB")
-        elif isinstance(image, np.ndarray):
-            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        top_k = min(top_k, self.num_classes)
+        top_k = max(top_k, 1)
         
         tensor = preprocess_image(image, image_size=224)
         tensor = tensor.to(self.device)

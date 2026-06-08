@@ -45,8 +45,14 @@ class ClassifierTrainer:
         correct = 0
         total = 0
         
-        pbar = tqdm(train_loader, desc="Training")
-        for inputs, labels in pbar:
+        pbar = tqdm(
+            train_loader,
+            desc="Training",
+            ascii=True,
+            dynamic_ncols=True,
+            mininterval=0.5,
+        )
+        for batch_idx, (inputs, labels) in enumerate(pbar):
             inputs = inputs.to(self.device)
             labels = labels.to(self.device)
             
@@ -63,7 +69,14 @@ class ClassifierTrainer:
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             
-            pbar.set_postfix({"loss": loss.item(), "acc": correct / total})
+            avg_loss = running_loss / total
+            avg_acc = correct / total
+            pbar.set_postfix(
+                loss=f"{avg_loss:.4f}",
+                acc=f"{avg_acc:.4f}",
+                refresh=True,
+            )
+            pbar.update(0)
         
         epoch_loss = running_loss / total
         epoch_acc = correct / total
@@ -76,8 +89,15 @@ class ClassifierTrainer:
         correct = 0
         total = 0
         
+        pbar = tqdm(
+            val_loader,
+            desc="Validating",
+            ascii=True,
+            dynamic_ncols=True,
+            mininterval=0.5,
+        )
         with torch.no_grad():
-            for inputs, labels in tqdm(val_loader, desc="Validating"):
+            for inputs, labels in pbar:
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
                 
@@ -88,6 +108,14 @@ class ClassifierTrainer:
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+                
+                avg_loss = running_loss / total
+                avg_acc = correct / total
+                pbar.set_postfix(
+                    loss=f"{avg_loss:.4f}",
+                    acc=f"{avg_acc:.4f}",
+                    refresh=True,
+                )
         
         epoch_loss = running_loss / total
         epoch_acc = correct / total

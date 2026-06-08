@@ -1,3 +1,4 @@
+import torch
 import torchvision.transforms as transforms
 from PIL import Image
 import numpy as np
@@ -39,12 +40,30 @@ def get_test_transforms(image_size=224):
     return get_val_transforms(image_size)
 
 
-def preprocess_image(image, image_size=224):
+def _to_pil_rgb(image):
     if isinstance(image, str):
         image = Image.open(image).convert("RGB")
     elif isinstance(image, np.ndarray):
-        image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        if image.ndim == 2:
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        elif image.shape[2] == 4:
+            image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
+        elif image.shape[2] == 3:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        else:
+            raise ValueError(f"Unsupported image shape: {image.shape}")
+        image = Image.fromarray(image)
+    elif isinstance(image, Image.Image):
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+    else:
+        raise ValueError(f"Unsupported image type: {type(image)}")
     
+    return image
+
+
+def preprocess_image(image, image_size=224):
+    image = _to_pil_rgb(image)
     transform = get_test_transforms(image_size)
     tensor = transform(image)
     tensor = tensor.unsqueeze(0)
@@ -55,6 +74,3 @@ def denormalize(tensor):
     mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     return tensor * std + mean
-
-
-import torch
