@@ -11,6 +11,13 @@ from .metrics import (
     ClassificationMetrics,
     DetectionMetrics,
 )
+from .task_scheduler import (
+    BatchTaskScheduler,
+    BatchTask,
+    TaskStatus,
+    TaskType,
+)
+from .storage import InferenceStorage
 
 __all__ = [
     "draw_detections",
@@ -22,4 +29,9 @@ __all__ = [
     "PerformanceMetrics",
     "ClassificationMetrics",
     "DetectionMetrics",
+    "BatchTaskScheduler",
+    "BatchTask",
+    "TaskStatus",
+    "TaskType",
+    "InferenceStorage",
 ]

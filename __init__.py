@@ -1,8 +1,14 @@
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "AI Inference Service"
 
 from config import Config
-from classification import build_resnet18, ClassifierTrainer, ClassifierInference
+from classification import (
+    build_resnet18,
+    ClassifierTrainer,
+    ClassifierInference,
+    FineTuneManager,
+    FineTuneStatus,
+)
 from detection import YOLOv5Detector
 from data import (
     get_train_transforms,
@@ -20,6 +26,10 @@ from utils import (
     PerformanceMetrics,
     ClassificationMetrics,
     DetectionMetrics,
+    BatchTaskScheduler,
+    TaskStatus,
+    TaskType,
+    InferenceStorage,
 )
 
 __all__ = [
@@ -27,6 +37,8 @@ __all__ = [
     "build_resnet18",
     "ClassifierTrainer",
     "ClassifierInference",
+    "FineTuneManager",
+    "FineTuneStatus",
     "YOLOv5Detector",
     "get_train_transforms",
     "get_val_transforms",
@@ -41,4 +53,8 @@ __all__ = [
     "PerformanceMetrics",
     "ClassificationMetrics",
     "DetectionMetrics",
+    "BatchTaskScheduler",
+    "TaskStatus",
+    "TaskType",
+    "InferenceStorage",
 ]
